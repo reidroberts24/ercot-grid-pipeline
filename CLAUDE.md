@@ -37,6 +37,7 @@ Project skills in `.claude/skills/` keep the docs current as work happens. When 
 | `record-decision` | A key technical choice is settled | `docs/decisions/` (use instead of `/adr` here) |
 | `park-idea` | An idea is out of scope for the current week | `docs/backlog.md` |
 | `plan-and-progress` | Planning, "what's next", finishing work, closing a week | `docs/weeks/`, spec checkboxes, Current phase line |
+| `sprint-plan` | Before starting any new task: state snapshot, drift check, sprint plan; no code until approved | Sprint entries in `docs/weeks/` |
 | `learning-notes` | A stack concept comes up for the first time | `docs/learning/<tool>/` |
 | `wrap-session` | End of a work session | Sweeps all of the above, suggests a commit |
 

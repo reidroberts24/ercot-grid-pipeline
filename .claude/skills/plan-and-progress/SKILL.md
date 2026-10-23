@@ -32,7 +32,7 @@ When work finishes *and has been verified* (ran it, saw the output), propose tic
 
 ## Mode: what's next
 
-Read the week file and recommend one next task, with one or two sentences on why it's next (usually: it unblocks the end-to-end path, or it retires the biggest risk). If there's no week file yet, offer to plan the week first.
+Read the week file and recommend one next task, with one or two sentences on why it's next (usually: it unblocks the end-to-end path, or it retires the biggest risk). If there's no week file yet, offer to plan the week first. Once the user wants to start it, hand off to `sprint-plan` before writing any code.
 
 ## Mode: close the week
 
