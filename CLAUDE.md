@@ -94,6 +94,9 @@ docker compose exec trino trino      # Trino CLI (catalog: iceberg)
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r ingestion/requirements.txt   # one-time setup
 .venv/bin/python -m ingestion.fetch_rt_prices --date 2026-10-15                # one day of hub + load-zone RT prices -> data/raw/
+
+# load a fetched day into iceberg.raw.rt_prices (reruns replace the day)
+docker compose exec spark spark-submit /home/iceberg/spark/jobs/load_rt_prices.py --date 2026-10-15
 ```
 
 UIs: Jupyter http://localhost:8888, Trino http://localhost:8080, SeaweedFS filer http://localhost:8889, SeaweedFS master http://localhost:9333.

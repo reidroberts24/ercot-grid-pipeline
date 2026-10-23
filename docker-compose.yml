@@ -68,6 +68,7 @@ services:
     volumes:
       - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf:ro
       - ./spark:/home/iceberg/spark
+      - ./data:/home/iceberg/data:ro
     mem_limit: 5g
 
   trino:
