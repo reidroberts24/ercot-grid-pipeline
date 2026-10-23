@@ -79,6 +79,19 @@ docs/                  Spec, decision records, benchmarks
 
 Fill this in as commands come to exist (starting the stack, running a job, running dbt, running tests).
 
+```bash
+docker compose up -d                 # start SeaweedFS, REST catalog, Spark, Trino
+docker compose ps                    # status and health
+docker compose logs -f <service>     # follow one service's logs
+docker compose down                  # stop; data stays in the named volumes
+docker compose down -v               # stop AND delete all data (deliberate reset only)
+
+docker compose exec spark spark-sql  # Spark SQL shell (default catalog: iceberg)
+docker compose exec trino trino      # Trino CLI (catalog: iceberg)
+```
+
+UIs: Jupyter http://localhost:8888, Trino http://localhost:8080, SeaweedFS filer http://localhost:8889, SeaweedFS master http://localhost:9333.
+
 ## Git
 
 - Commit after each working step, with short messages like `spark: batch load one day of hub prices` or `dbt: add stg_rt_prices`.
