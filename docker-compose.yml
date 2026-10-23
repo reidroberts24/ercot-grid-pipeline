@@ -4,6 +4,9 @@
 # Every service reads the same local S3 credentials from .env (S3_* vars, see
 # .env.example), falling back to admin/password. Inside the containers they are
 # exposed as AWS_* because that's where the AWS SDKs look for them.
+#
+# All ports bind to 127.0.0.1 so nothing is reachable from the network you're
+# on (Jupyter has no login, and the S3 defaults are well known).
 
 name: ercot
 
@@ -23,9 +26,9 @@ services:
     environment:
       <<: *s3-env
     ports:
-      - "8333:8333"   # S3 API
-      - "9333:9333"   # master UI
-      - "8889:8888"   # filer UI (browse buckets); 8888 is taken by Jupyter
+      - "127.0.0.1:8333:8333"   # S3 API
+      - "127.0.0.1:9333:9333"   # master UI
+      - "127.0.0.1:8889:8888"   # filer UI (browse buckets); 8888 is taken by Jupyter
     volumes:
       - seaweedfs-data:/data
     healthcheck:
@@ -49,7 +52,7 @@ services:
       # Keep the catalog's own database on a volume so tables survive restarts.
       CATALOG_URI: jdbc:sqlite:/home/iceberg/iceberg_catalog.db
     ports:
-      - "8181:8181"
+      - "127.0.0.1:8181:8181"
     volumes:
       - catalog-data:/home/iceberg
 
@@ -60,8 +63,8 @@ services:
     environment:
       <<: *s3-env
     ports:
-      - "8888:8888"   # Jupyter
-      - "4040:4040"   # Spark UI for the running application
+      - "127.0.0.1:8888:8888"   # Jupyter
+      - "127.0.0.1:4040:4040"   # Spark UI for the running application
     volumes:
       - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf:ro
       - ./spark:/home/iceberg/spark
@@ -74,7 +77,7 @@ services:
     environment:
       <<: *s3-env
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - ./trino/catalog/iceberg.properties:/etc/trino/catalog/iceberg.properties:ro
     # Trino's JVM takes 80% of the memory it can see; without a limit that
