@@ -109,7 +109,7 @@ The partitioning and compaction rows are where your SQL Server performance work 
 **Week 4: the thin slice**
 
 - [x] Bring up the core stack in Docker Compose (SeaweedFS, Iceberg REST catalog, Spark, Trino). On day 1, write an Iceberg table from Spark and read it from Trino (see setup)
-- [ ] Pull one day of hub and load-zone prices from the API and write them to a raw Iceberg table with a Spark batch job
+- [x] Pull one day of hub and load-zone prices from the API and write them to a raw Iceberg table with a Spark batch job
 - [ ] Build one dbt model on top through Trino and query it
 
 **Week 5: history and correctness**
