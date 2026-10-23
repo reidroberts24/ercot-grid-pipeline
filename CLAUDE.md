@@ -82,5 +82,5 @@ Fill this in as commands come to exist (starting the stack, running a job, runni
 ## Git
 
 - Commit after each working step, with short messages like `spark: batch load one day of hub prices` or `dbt: add stg_rt_prices`.
-- Never commit `.env`, credentials, data files, Spark checkpoints, or MinIO volumes.
+- Never commit `.env`, credentials, data files, Spark checkpoints, or SeaweedFS volumes.
 - No AI attribution in commits or PRs: no "Co-Authored-By: Claude", "Generated with Claude Code", or similar lines. Commits are authored as me. Why: this is a portfolio repo, and the history should read as my own work.

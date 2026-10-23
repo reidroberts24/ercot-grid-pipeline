@@ -7,8 +7,8 @@ data/
 *.csv
 checkpoints/
 **/checkpoint*/
-minio/
-minio-data/
+seaweedfs/
+seaweedfs-data/
 warehouse/
 
 # dbt

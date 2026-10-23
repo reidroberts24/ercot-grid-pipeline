@@ -46,6 +46,6 @@ The other project-memory skills are meant to fire in the moment, but in-the-mome
 
 4. **Apply the approved items** exactly as shown. If the user edits one, revise and confirm just that item.
 
-5. **Suggest a commit.** Propose message(s) in the CLAUDE.md style (`docs: record decision on REST catalog`, `spark: batch load one day of hub prices`), separating code and docs commits if both changed. Don't commit without the user saying so. Never stage `.env`, data files, checkpoints, or MinIO volumes. If the directory isn't a git repo yet, mention it and offer to run `git init` — don't run it unprompted.
+5. **Suggest a commit.** Propose message(s) in the CLAUDE.md style (`docs: record decision on REST catalog`, `spark: batch load one day of hub prices`), separating code and docs commits if both changed. Don't commit without the user saying so. Never stage `.env`, data files, checkpoints, or SeaweedFS volumes. If the directory isn't a git repo yet, mention it and offer to run `git init` — don't run it unprompted.
 
 6. **Leave a one-line pointer for next time**, like "Next up: <next task from the week file>." This makes the next session start fast.

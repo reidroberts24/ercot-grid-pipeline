@@ -33,7 +33,7 @@ flowchart TD
     ARC["ERCOT archives<br/>historical files"] --> BATCH
     WX["Open-Meteo<br/>hourly weather"] --> BATCH
     BATCH["Spark batch jobs<br/>backfills + daily loads, ingestion manifest"] --> RAW
-    subgraph LAKE["Iceberg lakehouse: MinIO storage + REST catalog"]
+    subgraph LAKE["Iceberg lakehouse: SeaweedFS storage + REST catalog"]
         RAW["Raw Iceberg tables<br/>as close to source as possible"] --> CLEAN
         CLEAN["Cleaned Iceberg tables<br/>UTC timestamps, dedup MERGE, partitioned by day"] --> DBT
         DBT["dbt on Trino<br/>star schema, Type 2 snapshot, tests"] --> MART
@@ -44,7 +44,7 @@ flowchart TD
     AF -.-> DBT
 ```
 
-Two ingestion paths feed one lakehouse. Live prices stream through Kafka into Spark Structured Streaming; history, weather, and daily loads come in through Spark batch jobs. Both write the same raw table layout. Spark does the heavy lifting (stream processing, backfills, and the MERGE into the cleaned layer), and dbt does the modeling by running SQL through Trino. Every table is an Iceberg table stored in MinIO, so Spark and Trino see the same data through the shared catalog. This same diagram goes in the README.
+Two ingestion paths feed one lakehouse. Live prices stream through Kafka into Spark Structured Streaming; history, weather, and daily loads come in through Spark batch jobs. Both write the same raw table layout. Spark does the heavy lifting (stream processing, backfills, and the MERGE into the cleaned layer), and dbt does the modeling by running SQL through Trino. Every table is an Iceberg table stored in SeaweedFS, so Spark and Trino see the same data through the shared catalog. This same diagram goes in the README.
 
 **How it maps to Netflix's stack,** which is worth saying in interviews:
 
@@ -54,7 +54,7 @@ Two ingestion paths feed one lakehouse. Live prices stream through Kafka into Sp
 | Spark | Spark | Same; batch and Structured Streaming |
 | Iceberg | Iceberg | Same; Netflix created it |
 | Trino/Presto | Trino | Same |
-| S3 | MinIO | S3-compatible, so the design moves to AWS unchanged |
+| S3 | SeaweedFS | S3-compatible, so the design moves to AWS unchanged |
 | Flink | Spark Structured Streaming | Flink is a stretch goal |
 | Maestro | Airflow | Maestro is open source but heavy to stand up |
 | (none) | dbt | Not central at Netflix; added because most data engineering jobs use it |
@@ -108,7 +108,7 @@ The partitioning and compaction rows are where your SQL Server performance work 
 
 **Week 4: the thin slice**
 
-- [ ] Bring up the core stack in Docker Compose (MinIO, Iceberg REST catalog, Spark, Trino). On day 1, write an Iceberg table from Spark and read it from Trino (see setup)
+- [ ] Bring up the core stack in Docker Compose (SeaweedFS, Iceberg REST catalog, Spark, Trino). On day 1, write an Iceberg table from Spark and read it from Trino (see setup)
 - [ ] Pull one day of hub and load-zone prices from the API and write them to a raw Iceberg table with a Spark batch job
 - [ ] Build one dbt model on top through Trino and query it
 
@@ -151,7 +151,7 @@ The partitioning and compaction rows are where your SQL Server performance work 
 
 - **Flink:** rewrite the streaming job in Flink, which is what Netflix uses for stream processing, and compare it with the Spark version.
 - **Write-audit-publish:** stage each batch load on an Iceberg branch, run checks against it, and publish only if they pass. This is Netflix's data quality pattern.
-- **One-weekend AWS deploy:** swap MinIO for S3, the REST catalog for Glue, and local Spark for EMR Serverless, then tear it all down. Set a billing alert first.
+- **One-weekend AWS deploy:** swap SeaweedFS for S3, the REST catalog for Glue, and local Spark for EMR Serverless, then tear it all down. Set a billing alert first.
 
 ## Stack and setup
 
@@ -162,7 +162,7 @@ Everything runs on your machine in Docker Compose. There are no cloud costs.
 | Live ingestion | Python producer (`confluent-kafka`) | Polls the ERCOT API and publishes to Kafka |
 | Streaming | Apache Kafka | Single broker in KRaft mode, so no ZooKeeper; one container |
 | Processing | Apache Spark (PySpark), batch and Structured Streaming | Local mode (`local[*]`); optionally a Standalone cluster across two machines |
-| Object storage | MinIO | S3-compatible, so the same paths and APIs work on AWS |
+| Object storage | SeaweedFS (S3 gateway) | S3-compatible, so the same paths and APIs work on AWS; replaced MinIO (decision 001) |
 | Table format | Apache Iceberg | MERGE, time travel, schema and partition evolution |
 | Catalog | Iceberg REST catalog | Lets Spark and Trino see the same tables; Apache Polaris or Nessie are drop-in alternatives |
 | Query engine | Trino | Interactive SQL, and the engine dbt runs on |
@@ -174,7 +174,7 @@ Everything runs on your machine in Docker Compose. There are no cloud costs.
 **Setup notes that shape the design:**
 
 - **Memory.** The full stack wants about 16GB of RAM. If that's tight, run only what the current week needs: Kafka can stay off until week 6, and Airflow and Superset until week 7.
-- **The day-1 integration check.** Spark and Trino must both point at the same REST catalog and reach MinIO. Spark needs the Iceberg Spark runtime and AWS bundle jars, plus an S3 endpoint set to MinIO with path-style access. Getting a table written by Spark and read by Trino is the riskiest wiring in the project, so do it first. Start from the Iceberg project's Spark quickstart Docker Compose file, which already includes Spark, a REST catalog, and MinIO, and add Trino and Kafka to it.
+- **The day-1 integration check.** Spark and Trino must both point at the same REST catalog and reach SeaweedFS. Spark needs the Iceberg Spark runtime and AWS bundle jars, plus an S3 endpoint set to SeaweedFS with path-style access. Getting a table written by Spark and read by Trino is the riskiest wiring in the project, so do it first. Start from the Iceberg project's Spark quickstart Docker Compose file, which already includes Spark and a REST catalog; swap its MinIO service for SeaweedFS with the S3 gateway enabled (MinIO stopped shipping open-source images in 2025, see `docs/decisions/001-object-storage-seaweedfs.md`), and add Trino and Kafka to it.
 - **Spark reads Kafka** through the `spark-sql-kafka` connector package, which must match your Spark version.
 - **Your laptop isn't always on.** That's fine. Airflow's catchup re-runs missed batch intervals when you start it again, and the streaming job resumes from its last Kafka offset as long as the topic's retention covers the gap (set it to a few days). Both are good demonstrations of the recovery design.
 

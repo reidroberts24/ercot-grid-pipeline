@@ -52,7 +52,7 @@ Read the week file and recommend one next task, with one or two sentences on why
 
 ## Spec item: Bring up the core stack...
 
-- [ ] **Compose file with MinIO, REST catalog, Spark, Trino** — *done when:* all four containers healthy. *Teaches:* how the Iceberg REST catalog decouples engines from storage.
+- [ ] **Compose file with SeaweedFS, REST catalog, Spark, Trino** — *done when:* all four containers healthy. *Teaches:* how the Iceberg REST catalog decouples engines from storage.
 - [ ] **Day-1 check: write an Iceberg table from Spark, read it from Trino** — *done when:* `SELECT count(*)` in Trino matches the Spark write. *Teaches:* catalog and S3 configuration shared across engines.
 
 ## Spec item: Pull one day of prices...

@@ -1,6 +1,6 @@
 ---
 name: learning-notes
-description: Save interview-prep notes on data engineering concepts to docs/learning/. Use this whenever a Spark, Kafka, Iceberg, Trino, dbt, Airflow, MinIO, or Superset concept comes up for the first time in this project (e.g. watermarks, hidden partitioning, MERGE INTO, snapshots, checkpoints, consumer offsets, incremental models, SCD snapshots), when the user asks "why does X work this way", "explain X", or "how does X work under the hood", or when we hit a gotcha in one of these tools that's worth remembering.
+description: Save interview-prep notes on data engineering concepts to docs/learning/. Use this whenever a Spark, Kafka, Iceberg, Trino, dbt, Airflow, SeaweedFS, or Superset concept comes up for the first time in this project (e.g. watermarks, hidden partitioning, MERGE INTO, snapshots, checkpoints, consumer offsets, incremental models, SCD snapshots), when the user asks "why does X work this way", "explain X", or "how does X work under the hood", or when we hit a gotcha in one of these tools that's worth remembering.
 ---
 
 # Learning notes
