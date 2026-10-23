@@ -90,6 +90,11 @@ docker compose exec spark spark-sql  # Spark SQL shell (default catalog: iceberg
 docker compose exec trino trino      # Trino CLI (catalog: iceberg)
 ```
 
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r ingestion/requirements.txt   # one-time setup
+.venv/bin/python -m ingestion.fetch_rt_prices --date 2026-10-15                # one day of hub + load-zone RT prices -> data/raw/
+```
+
 UIs: Jupyter http://localhost:8888, Trino http://localhost:8080, SeaweedFS filer http://localhost:8889, SeaweedFS master http://localhost:9333.
 
 ## Git
