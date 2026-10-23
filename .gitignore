@@ -1,0 +1,30 @@
+# Secrets and config
+.env
+
+# Data, checkpoints, and local storage
+data/
+*.parquet
+*.csv
+checkpoints/
+**/checkpoint*/
+minio/
+minio-data/
+warehouse/
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editor and OS
+.idea/
+.DS_Store
+
+# Claude Code local settings
+.claude/settings.local.json
