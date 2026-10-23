@@ -101,6 +101,19 @@ docker compose exec spark spark-submit /home/iceberg/spark/jobs/load_rt_prices.p
 
 UIs: Jupyter http://localhost:8888, Trino http://localhost:8080, SeaweedFS filer http://localhost:8889, SeaweedFS master http://localhost:9333.
 
+A fresh SeaweedFS volume has no buckets. Create the warehouse bucket once before the first write:
+
+```bash
+echo "s3.bucket.create -name warehouse" | docker compose exec -T seaweedfs weed shell
+```
+
+### Windows
+
+- The venv's Python is `.venv\Scripts\python`, not `.venv/bin/python`.
+- In Git Bash, prefix `docker compose exec` with `MSYS_NO_PATHCONV=1`, or container paths like `/home/iceberg/...` get rewritten to Windows paths.
+- Run the `weed shell` pipe above from Git Bash. PowerShell adds a byte-order mark that breaks the command.
+- Docker gets half the host RAM by default. Set `memory=12GB` under `[wsl2]` in `%USERPROFILE%\.wslconfig`, then run `wsl --shutdown`.
+
 ## Git
 
 - Commit after each working step, with short messages like `spark: batch load one day of hub prices` or `dbt: add stg_rt_prices`.
