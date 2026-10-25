@@ -15,8 +15,20 @@
 
 ## Spec item: Build one dbt model on top through Trino
 
-- [ ] **dbt project on `dbt-trino`** (`dbt/`), with a profile and a source definition for `raw.rt_prices`. *Done when:* `dbt debug` passes. *Teaches:* dbt sources, profiles, and adapters.
-- [ ] **`stg_rt_prices` model + a thin-slice query.** Use a UTC timestamp and clean column names, and state the grain in the description. *Done when:* `dbt run` succeeds and a Trino query returns the average price per hub by hour for the day. *Teaches:* dbt models and materializations, and how dbt compiles SQL and runs it on Trino.
+- [x] **dbt project on `dbt-trino`** (`dbt/`), with a profile and a source definition for `raw.rt_prices`. *Done when:* `dbt debug` passes. *Teaches:* dbt sources, profiles, and adapters. *Verified 2026-10-25:* dbt-core 1.12.6 + dbt-trino 1.10.6, scaffolded with `dbt init`, repo-local `profiles.yml`; `dbt debug` all checks passed.
+- [x] **`stg_rt_prices` model + a thin-slice query.** Use a UTC timestamp and clean column names, and state the grain in the description. *Done when:* `dbt run` succeeds and a Trino query returns the average price per hub by hour for the day. *Teaches:* dbt models and materializations, and how dbt compiles SQL and runs it on Trino. *Verified 2026-10-25:* view `iceberg.staging.stg_rt_prices` has 4,224 rows (= raw), `interval_start_utc` spans 2026-10-15 05:00 to 2026-10-17 04:45 UTC; `analyses/avg_hub_price_by_hour.sql` returns 24 hours × 4 intervals for all 5 hubs.
 
 ## Retro
-<!-- filled in at week close -->
+**Went well**
+- The thin slice works end to end: ERCOT API → landed JSON → Spark → `raw.rt_prices` (Iceberg) → dbt view on Trino → hourly hub prices.
+- Doing the day-1 Spark-writes/Trino-reads check first retired the riskiest wiring early.
+- Day-scoped overwrite made reruns idempotent from the start.
+
+**Was hard**
+- Finding the natural key: LZ and LZEW share point names (lessons.md).
+- dbt setup friction: `dbt init` wrote a placeholder profile into `~/.dbt/`, the project folder had to be moved into `dbt/`, and a stopped Docker stack looked like a config error.
+
+**Change next week**
+- Run `docker compose ps` before debugging any connection error.
+- Give step-by-step instructions with exact paths and file contents, one step at a time.
+- The UTC conversion lives in `stg_rt_prices` for now; decide in week 5 whether it moves to Spark's cleaned layer alongside the DST handling.

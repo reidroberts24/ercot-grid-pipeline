@@ -8,7 +8,7 @@ This is a portfolio and learning project. Its purpose is to build hands-on depth
 
 ## Current phase
 
-**Week 4: the thin slice.** See the build plan in the spec. Update this line as each week finishes, and tick the checkboxes in the spec as items are completed.
+**Week 5: history and correctness.** See the build plan in the spec. Update this line as each week finishes, and tick the checkboxes in the spec as items are completed.
 
 ## Scope rules
 
@@ -99,7 +99,17 @@ python3 -m venv .venv && .venv/bin/pip install -r ingestion/requirements.txt   #
 docker compose exec spark spark-submit /home/iceberg/spark/jobs/load_rt_prices.py --date 2026-10-15
 ```
 
-UIs: Jupyter http://localhost:8888, Trino http://localhost:8080, SeaweedFS filer http://localhost:8889, SeaweedFS master http://localhost:9333.
+```bash
+# dbt: run from inside dbt/ (profiles.yml there is picked up automatically)
+cd dbt
+../.venv/bin/pip install -r requirements.txt   # one-time
+../.venv/bin/dbt debug                         # check the Trino connection
+../.venv/bin/dbt run                           # build models
+../.venv/bin/dbt run --select stg_rt_prices    # build one model
+../.venv/bin/dbt compile                       # compile analyses to target/compiled/ercot/analyses/
+```
+
+UIs: Jupyter http://localhost:8888, Trino http://localhost:8080, SeaweedFS filer http://localhost:8889, SeaweedFS master http://localhost:9333. Trino via DataGrip: localhost:8080, user any, no password, catalog iceberg.
 
 A fresh SeaweedFS volume has no buckets. Create the warehouse bucket once before the first write:
 
