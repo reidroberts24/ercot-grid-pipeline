@@ -1,0 +1,11 @@
+version: 2
+models:
+  - name: stg_rt_prices
+    description: >
+      Real-time settlement point prices with clean names and a UTC timestamp.
+      Grain: one row per settlement point, settlement point type, and 15-minute interval.
+    columns:
+      - name: interval_start_utc
+        description: Start of the 15-minute interval, UTC.
+      - name: price_usd_per_mwh
+        description: Can be negative or spike far above normal

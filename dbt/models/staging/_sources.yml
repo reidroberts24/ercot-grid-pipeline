@@ -1,0 +1,7 @@
+sources:
+  - name: ercot
+    database: iceberg
+    schema: raw
+    tables:
+      - name: rt_prices
+        description: Raw ERCOT NP6-905-CD real-time prices, loaded by spark/jobs/load_rt_prices.py.
